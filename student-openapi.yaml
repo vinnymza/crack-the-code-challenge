@@ -114,6 +114,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SignUpResult'
+    delete:
+      summary: Delete signed up course
+      responses:
+        '200':
+          description: Delete signed up course
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpResult'
 components:
   schemas:
     ErrorModel:
@@ -146,7 +155,7 @@ components:
           description: Unique identifier for the student
         documentId:
           type: string
-          description: Document id like passport, dni, other
+          description: Document id like passport, dni, other of the student
         name:
           type: string
           description: Name of the student
@@ -157,6 +166,40 @@ components:
           type: string
           format: email
           description: Email address of the student
+      parent:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: ^[a-f\d]+$
+              description: Unique identifier for the parent
+            name:
+              type: string
+              description: Name of the parent
+            email:
+              type: string
+              format: email
+              description: Email address of the parent
+            documentId:
+              type: string
+              description: Document id like passport, dni, other of the parent
+          nullable: true
+      courses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                pattern: ^[a-f\d]+$
+                description: Unique identifier for the course
+              name:
+                type: string
+                description: Name of the course
+              progress: 
+                type: integer
+                description: Progress of the student in the course using %
+          description: List of courses the student is enrolled in
       required:
         - name
         - documentId
