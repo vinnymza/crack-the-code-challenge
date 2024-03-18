@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: Student Management API
+  description: API for managing student records
+  version: 1.0.0
+servers:
+  - url: /students
+    description: Student Management Server
+paths:
+  /health:
+    get:
+      description: Health check endpoint for Student Management API
+      operationId: healthCheck
+      tags:
+        - health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+                
+  /:
+    get:
+      summary: Get all students
+      responses:
+        '200':
+          description: A list of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+    post:
+      summary: Create a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Student created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+  /{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: ID of the student
+        schema:
+          type: string
+          pattern: ^[a-f\d]+$
+    get:
+      summary: Get a student by ID
+      responses:
+        '200':
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+    put:
+      summary: Update a student by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+    delete:
+      summary: Delete a student by ID
+      responses:
+        '204':
+          description: Student deleted successfully
+  /{id}/signUp/{courseId}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        description: ID of the student
+        schema:
+          type: string
+          pattern: ^[a-f\d]+$
+      - in: path
+        name: courseId
+        required: true
+        description: ID of the course to be signed in
+        schema:
+          type: string
+          pattern: ^[a-f\d]+$
+    post:
+      summary: Get a student by ID
+      responses:
+        '200':
+          description: Sign up to specific Course
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpResult'
+components:
+  schemas:
+    ErrorModel:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    HealthStatus:
+      description: Health check status
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum:
+            - OK
+        timestamp:
+          type: integer
+          description: Milliseconds since Epoch time
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          pattern: ^[a-f\d]+$
+          description: Unique identifier for the student
+        documentId:
+          type: string
+          description: Document id like passport, dni, other
+        name:
+          type: string
+          description: Name of the student
+        age:
+          type: integer
+          description: Age of the student
+        email:
+          type: string
+          format: email
+          description: Email address of the student
+      required:
+        - name
+        - documentId
+        - age
+        - email
+    SignUpCommand:
+      description: Sign up to course command
+      type: object
+      required:
+        - courseId
+      properties:
+        courseId:
+          type: string
+          pattern: ^[a-f\d]+$
+          description: Unique ID of the course to be signed up
+    SignUpResult:
+      description: Sign up result
+      allOf:
+        - $ref: '#/components/schemas/SignUpCommand'
+        - type: object
+          required:
+            - id
+            - timestamp
+          properties:
+            id:
+              type: string
+              pattern: ^[a-f\d]+$
+              description: Unique ID of the course signed up
+            result:
+              type: number
+            message:
+              type: string
+            timestamp:
+              type: integer
+              description: Milliseconds since Epoch time
+  responses:
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+    NotFoundError:
+      description: Not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+  requestBodies:
+    SignUpCommand:
+      description: Sign up to course command request body
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignUpCommand'
+tags:
+  - name: health
+    description: health check
