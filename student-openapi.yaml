@@ -106,7 +106,7 @@ paths:
           type: string
           pattern: ^[a-f\d]+$
     post:
-      summary: Get a student by ID
+      summary: Sign up for a course
       responses:
         '200':
           description: Sign up to specific Course
