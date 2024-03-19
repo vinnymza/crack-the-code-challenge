@@ -23,7 +23,70 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
           
-                
+  /graphql:
+    get:
+      summary: Endpoint GraphQL para consultar estudiantes (GET)
+      operationId: graphqlQueryGet
+      tags:
+        - graphql
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: Consulta GraphQL a ejecutar
+      responses:
+        '200':
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    description: Datos de la respuesta
+                    type: object
+                    additionalProperties: true
+        '400':
+          description: Error de solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+paths:
+  /graphql:
+    get:
+      summary: GraphQL endpoint to query students (GET)
+      operationId: graphqlQueryGet
+      tags:
+        - graphql
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: GraphQL query to execute
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '400':
+          description: Bad request error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          $ref: '#/components/responses/InternalServerError'               
   /:
     get:
       summary: Get all students
